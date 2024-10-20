@@ -1740,7 +1740,7 @@ def get_parameters_mp(
     pulled_ratio: float,
     r: float,
     selecting_rule: float = 0.6,
-    num_proc: int = 8,
+    num_proc: int = 128,
 ) -> Tuple[List[Tuple], List[Tuple]]:
     true_parameter: List[Tuple] = []
     sample_parameter: List[Tuple] = []
@@ -1774,7 +1774,7 @@ def policy_ratio_unwrapper(args: Tuple):
     return policy_ratio(*args)
 
 
-def main_mp(num_proc: int = 8):
+def main_mp(num_proc: int = 128):
     # r = 0.1
     number_of_timeperiods = 15
     number_of_states = 5
@@ -1785,8 +1785,8 @@ def main_mp(num_proc: int = 8):
     sample_number = 100
     true_parameter = [] 
     sample_parameter = []
-    for i in range(21):
-        r = i / 20
+    for i in range(51):
+        r = i / 50
         true_parameter_i, sample_parameter_i = get_parameters_mp(
             sample_number,
             number_of_timeperiods,
@@ -1848,7 +1848,7 @@ def main_mp(num_proc: int = 8):
     # print(np.array(results))
     results = np.array(results)
     # I want to save the results
-    np.save("results_policy_ratio.npy", results)
+    np.save("results/results_policy_ratio3.0.npy", results)
     return results
 
 
