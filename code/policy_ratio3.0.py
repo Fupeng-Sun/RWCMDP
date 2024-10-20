@@ -1848,7 +1848,7 @@ def main_mp(num_proc: int = 128):
     # print(np.array(results))
     results = np.array(results)
     # I want to save the results
-    np.save("results/results_policy_ratio3.0.npy", results)
+    np.save("results_RWCMDP/results_policy_ratio3.0.npy", results)
     return results
 
 
