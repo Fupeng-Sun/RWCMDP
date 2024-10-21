@@ -14,7 +14,7 @@ from typing import Dict, List, Optional, Tuple
 import cplex
 # import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
+# import pandas as pd
 from cplex import Cplex, SparsePair
 from cplex.exceptions import CplexError
 from tqdm.auto import tqdm
