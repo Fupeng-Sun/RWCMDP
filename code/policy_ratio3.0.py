@@ -12,7 +12,7 @@ from functools import partial
 from typing import Dict, List, Optional, Tuple
 
 import cplex
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from cplex import Cplex, SparsePair
