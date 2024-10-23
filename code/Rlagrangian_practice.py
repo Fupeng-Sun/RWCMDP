@@ -1983,7 +1983,7 @@ def subgradient(number_of_timeperiods, number_of_states, reward, init_prob, prob
 def main_mp():
     r = 0
     T0=0
-    num_proc = 8
+    num_proc = 128
     number_of_timeperiods = 15
     number_of_states = 5
     number_of_bandit_in_total = 100
