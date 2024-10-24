@@ -1946,7 +1946,7 @@ def subgradient(number_of_timeperiods, number_of_states, reward, init_prob, prob
     Returns:
     The objective value of the solved robust Lagrangian relaxation, and the optimal solutions.
     """
-    iterations = 10
+    iterations = 20
     learning_rate = 0.001
     stopping_threshold = 1e-6
     
