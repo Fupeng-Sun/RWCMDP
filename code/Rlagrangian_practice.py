@@ -1947,7 +1947,7 @@ def subgradient(number_of_timeperiods, number_of_states, reward, init_prob, prob
     The objective value of the solved robust Lagrangian relaxation, and the optimal solutions.
     """
     iterations = 10
-    learning_rate = 0.005
+    learning_rate = 0.001
     stopping_threshold = 1e-6
     
     # generate some randomized parameter initial values
@@ -2072,7 +2072,8 @@ def main_mp():
     # print(f"Robust_Lagrangian_relaxation", Robust_Lagrangian_relaxation) 
     print(f"Robust_Lagrangian_relaxation_subgradient", Robust_Lagrangian_relaxation_subgradient) 
     print(f"constant_decision_rule_LP", objval_true_c_b) 
-
+    print(f"mu_star", mu_star)
+    print(f"gradient", gradient)
 class TimeCounter:
     # we implement a simple context timer for measuring the running time of the code
     def __init__(self, name: str = ""):
