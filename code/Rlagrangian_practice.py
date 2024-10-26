@@ -1758,7 +1758,7 @@ def RLagrangian(prob_true, value_last_time, radius, number_of_states):
     # Initialize CPLEX environment and model
     cplex = Cplex()
     cplex.set_problem_type(Cplex.problem_type.LP)
-    cplex.objective.set_sense(cplex.objective.sense.maximize)
+    cplex.objective.set_sense(cplex.objective.sense.minimize)
 
     # Define Rprob variables
     Rprob = [f"Rprob_{i}" for i in range(number_of_states)]
@@ -1981,7 +1981,7 @@ def subgradient(number_of_timeperiods, number_of_states, reward, init_prob, prob
     return rsl, mu_star, value[idx], action[idx], gradient[idx], Rprob_pull_batch[idx], Rprob_donothing_batch[idx]
 
 def main_mp():
-    r = 0.2
+    r = 0.0
     T0=0
     num_proc = 256
     number_of_timeperiods = 15
