@@ -1981,7 +1981,7 @@ def subgradient(number_of_timeperiods, number_of_states, reward, init_prob, prob
     return rsl, mu_star, value[idx], action[idx], gradient[idx], Rprob_pull_batch[idx], Rprob_donothing_batch[idx]
 
 def main_mp():
-    r = 0.0
+    r = 0.1
     T0=0
     num_proc = 256
     number_of_timeperiods = 15
