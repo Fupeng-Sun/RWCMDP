@@ -1774,7 +1774,7 @@ def policy_ratio_unwrapper(args: Tuple):
     return policy_ratio(*args)
 
 
-def main_mp(num_proc: int = 128):
+def main_mp(num_proc: int = 256):
     # r = 0.1
     number_of_timeperiods = 15
     number_of_states = 5
