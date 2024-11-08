@@ -927,7 +927,7 @@ def count_to_kernel(
     for (i, s_t, a_t, s_tp1), count in N_sas.items():
         N_sa_value = N_sa[(i, s_t, a_t)]
         if N_sa_value > 0:
-            transition_kernel[i, s_t, a_t, s_tp1] = count / N_sa_value
+            transition_kernel[:, :, 1, :] = (transition_kernel[:, :, 1, :] + 0.01)/(transition_kernel[:, :, 1, :] + 0.01).sum(axis=2, keepdims=True)
     return transition_kernel[:, :, 1, :], transition_kernel[:, :, 0, :]
 
 
