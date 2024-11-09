@@ -12,9 +12,9 @@ from functools import partial
 from typing import Dict, List, Optional, Tuple
 
 import cplex
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
-# import pandas as pd
+import pandas as pd
 from cplex import Cplex, SparsePair
 from cplex.exceptions import CplexError
 from tqdm.auto import tqdm
@@ -182,7 +182,7 @@ def initialization(
     )
 
     # Randomly generate the reward function
-    reward = np.random.rand(number_of_bandit_in_total, number_of_states)
+    reward = np.random.uniform(0, 100, (number_of_bandit_in_total, number_of_states))
     return (
         init_prob,
         prob_pull,
@@ -517,27 +517,39 @@ def constant_decision_rule_LP(
                         for _ in range(number_of_states)
                         if _ != l
                     ]
-                    result_pull[t][j][k][l] = min(
-                        max(
+                    # result_pull[t][j][k][l] = min(
+                    #     max(
+                    #         0,
+                    #         prob_pull[j][k][l] - radius_pull[t][j][k],
+                    #         1 - sum([t[0] for t in tmp_ub_l]),
+                    #     ),
+                    #     max(0, prob_pull[j][k][l] - radius_pull[t][j][k]),
+                    # )
+                    # result_donothing[t][j][k][l] = min(
+                    #     max(
+                    #         0,
+                    #         prob_donothing[j][k][l] - radius_donothing[t][j][k],
+                    #         1 - sum([t[1] for t in tmp_ub_l]),
+                    #     ),
+                    #     max(
+                    #         0,
+                    #         prob_donothing[j][k][l] - radius_donothing[t][j][k],
+                    #     ),
+                    # )
+                    result_pull[t][j][k][l] = max(
                             0,
                             prob_pull[j][k][l] - radius_pull[t][j][k],
                             1 - sum([t[0] for t in tmp_ub_l]),
-                        ),
-                        max(0, prob_pull[j][k][l] - radius_pull[t][j][k]),
-                    )
-                    result_donothing[t][j][k][l] = min(
-                        max(
+                        )
+                    result_donothing[t][j][k][l] = max(
                             0,
                             prob_donothing[j][k][l] - radius_donothing[t][j][k],
                             1 - sum([t[1] for t in tmp_ub_l]),
-                        ),
-                        max(
-                            0,
-                            prob_donothing[j][k][l] - radius_donothing[t][j][k],
-                        ),
-                    )
+                        )
     # print(result_donothing[0]==prob_donothing)
-
+    result_pull[np.sum(result_pull, axis=3) > 1.1] = [0] * number_of_states
+    result_donothing[np.sum(result_donothing, axis=3) > 1.1] = [0] * number_of_states
+    
     # Time period constraints
     constraints = []
     senses = []
@@ -679,7 +691,8 @@ def monte_carlo_randomized_policy_infeasible(
         active_probs = np.divide(
             pi1_t, sum_pi, out=np.zeros_like(pi1_t), where=sum_pi > 0
         )
-
+        # active_probs = np.where(active_probs > 0, active_probs, 1/2)
+        
         # Randomly determine which arms are active based on the active probabilities (vectorized)
         random_values = np.random.rand(number_of_bandit_in_total)
         active = random_values < active_probs
@@ -697,13 +710,14 @@ def monte_carlo_randomized_policy_infeasible(
         total_reward += np.sum(reward_for_pulled)
 
         # Update the state of pulled arms based on transition probabilities (vectorized)
+        # print(prob_pull[state_idx, arm_state[state_idx], :])
         if len(state_idx) > 0:
             arm_state[state_idx] = generate_number_in_dist_batch(
                 prob_pull[state_idx, arm_state[state_idx], :]
             )
         active_bandit_number += np.sum(action)
         # print(f"Allowed bandit number: {int(pulled_ratio * number_of_bandit_in_total)}")
-        # print(f"Number of active bandits of fluid LP: {np.sum(action)}")
+        print(f"Number of active bandits of fluid LP: {np.sum(action)}")
 
     return total_reward, active_bandit_number/number_of_timeperiods
 
@@ -758,7 +772,8 @@ def monte_carlo_randomized_policy_feasible(
         active_probs = np.divide(
             pi1_t, sum_pi, out=np.zeros_like(pi1_t), where=sum_pi > 0
         )
-
+        # active_probs = np.where(active_probs > 0, active_probs, 1/2)
+        
         # Randomly determine which arms are active based on the active probabilities (vectorized)
         random_values = np.random.rand(number_of_bandit_in_total)
         active = random_values < active_probs
@@ -904,7 +919,8 @@ def calculate_mle_transition_count(
                 N_sas[(i, s_t, a_t, s_tp1)] += 1
 
     # Normalize initial state probabilities
-    initial_prob /= initial_prob.sum(axis=1, keepdims=True)
+    # initial_prob = (initial_prob + 0.1)/(initial_prob + 0.1).sum(axis=1, keepdims=True)
+    initial_prob = initial_prob/initial_prob.sum(axis=1, keepdims=True)
     return N_sa, N_sas, initial_prob
 
 
@@ -927,9 +943,11 @@ def count_to_kernel(
     for (i, s_t, a_t, s_tp1), count in N_sas.items():
         N_sa_value = N_sa[(i, s_t, a_t)]
         if N_sa_value > 0:
-            transition_kernel[:, :, 1, :] = (transition_kernel[:, :, 1, :] + 0.01)/(transition_kernel[:, :, 1, :] + 0.01).sum(axis=2, keepdims=True)
+            transition_kernel[i, s_t, a_t, s_tp1] = count / N_sa_value
+    # mask = np.sum(transition_kernel[:, :, :, :], axis=3) == 0
+    # transition_kernel = np.where(mask[:, :, :, np.newaxis], np.array(generate_dist(number_of_states, 0)), transition_kernel[:, :, :, :])
+    transition_kernel[:, :, 1, :] = (transition_kernel[:, :, 1, :] + 0.01)/(transition_kernel[:, :, 1, :] + 0.01).sum(axis=2, keepdims=True)
     return transition_kernel[:, :, 1, :], transition_kernel[:, :, 0, :]
-
 
 def monte_carlo_randomized_policy_infeasible_online(
     number_of_timeperiods,
@@ -1454,7 +1472,7 @@ def policy_ratio(
             radius_pull,
             radius_donothing,
             mixed = 0,
-            change = 0,
+            change = 1,
         )
     )
     feasible_total_reward_mle_online_unmixed, feasible_active_bandit_number_mle_online_unmixed = (
@@ -1476,7 +1494,7 @@ def policy_ratio(
             radius_pull,
             radius_donothing,
             mixed = 0,
-            change = 0,
+            change = 1,
         )
     )
     infeasible_total_reward_Rmle_online_unmixed, infeasible_active_bandit_number_Rmle_online_unmixed = (
@@ -1498,7 +1516,7 @@ def policy_ratio(
             radius_pull,
             radius_donothing,
             mixed = 0,
-            change = 0,
+            change = 1,
         )
     )
     feasible_total_reward_Rmle_online_unmixed, feasible_active_bandit_number_Rmle_online_unmixed = (
@@ -1520,7 +1538,7 @@ def policy_ratio(
             radius_pull,
             radius_donothing,
             mixed = 0,
-            change = 0,
+            change = 1,
         )
     )
 
