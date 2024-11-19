@@ -1805,7 +1805,7 @@ def main_mp(num_proc: int = 256):
     sample_parameter = []
     for path_length in [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80]:
         for i in range(51):
-            r = i / 50
+            r = i / 200
             true_parameter_i, sample_parameter_i = get_parameters_mp(
                 sample_number,
                 number_of_timeperiods,
