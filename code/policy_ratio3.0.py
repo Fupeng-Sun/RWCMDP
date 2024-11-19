@@ -1798,76 +1798,77 @@ def main_mp(num_proc: int = 256):
     number_of_states = 5
     number_of_bandit_in_total = 100
     pulled_ratio = 0.25
-    path_length = 10
+    # path_length = 10
     num_paths = 5
     sample_number = 100
     true_parameter = [] 
     sample_parameter = []
-    for i in range(51):
-        r = i / 50
-        true_parameter_i, sample_parameter_i = get_parameters_mp(
-            sample_number,
-            number_of_timeperiods,
-            number_of_states,
-            number_of_bandit_in_total,
-            path_length,
-            num_paths,
-            pulled_ratio,
-            r,
-        )
-        true_parameter += true_parameter_i
-        sample_parameter += sample_parameter_i
-    # print(true_parameter)
-    # print(sample_parameter)
-    prepared_args = [
-        (
-            number_of_timeperiods,
-            number_of_bandit_in_total,
-            number_of_states,
-            init_prob,
-            prob_pull,
-            prob_donothing,
-            reward,
-            initial_prob,
-            transition_kernel_pull,
-            transition_kernel_donothing,
-            pulled_ratio,
-            radius_pull,
-            radius_donothing,
-            N_sa,
-            N_sas,
-        )
-        for (
-            init_prob,
-            prob_pull,
-            prob_donothing,
-            reward,
-            radius_pull,
-            radius_donothing,
-        ), (
-            initial_prob,
-            transition_kernel_pull,
-            transition_kernel_donothing,
-            N_sa,
-            N_sas,
-        ) in zip(
-            true_parameter, sample_parameter
-        )
-    ]
-
-    with mp.Pool(processes=num_proc) as pool:
-        results = list(
-            tqdm(
-                pool.imap(policy_ratio_unwrapper, prepared_args),
-                total=len(prepared_args),
-                desc=f"Calculating policy ratio with poolsize={num_proc}",
+    for path_length in [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80]:
+        for i in range(51):
+            r = i / 50
+            true_parameter_i, sample_parameter_i = get_parameters_mp(
+                sample_number,
+                number_of_timeperiods,
+                number_of_states,
+                number_of_bandit_in_total,
+                path_length,
+                num_paths,
+                pulled_ratio,
+                r,
             )
-        )
-    # print(np.array(results))
-    results = np.array(results)
-    # I want to save the results
-    np.save("results_RWCMDP/results_policy_ratio3.0.npy", results)
-    return results
+            true_parameter += true_parameter_i
+            sample_parameter += sample_parameter_i
+        # print(true_parameter)
+        # print(sample_parameter)
+        prepared_args = [
+            (
+                number_of_timeperiods,
+                number_of_bandit_in_total,
+                number_of_states,
+                init_prob,
+                prob_pull,
+                prob_donothing,
+                reward,
+                initial_prob,
+                transition_kernel_pull,
+                transition_kernel_donothing,
+                pulled_ratio,
+                radius_pull,
+                radius_donothing,
+                N_sa,
+                N_sas,
+            )
+            for (
+                init_prob,
+                prob_pull,
+                prob_donothing,
+                reward,
+                radius_pull,
+                radius_donothing,
+            ), (
+                initial_prob,
+                transition_kernel_pull,
+                transition_kernel_donothing,
+                N_sa,
+                N_sas,
+            ) in zip(
+                true_parameter, sample_parameter
+            )
+        ]
+
+        with mp.Pool(processes=num_proc) as pool:
+            results = list(
+                tqdm(
+                    pool.imap(policy_ratio_unwrapper, prepared_args),
+                    total=len(prepared_args),
+                    desc=f"Calculating policy ratio with poolsize={num_proc}",
+                )
+            )
+        # print(np.array(results))
+        results = np.array(results)
+        # save the results
+        np.save(f"results_RWCMDP/results_policy_ratio3.0_{path_length}.npy", results)
+    return 
 
 
 class TimeCounter:
