@@ -18,6 +18,7 @@ import pandas as pd
 from cplex import Cplex, SparsePair
 from cplex.exceptions import CplexError
 from tqdm.auto import tqdm
+import gc
 
 
 def generate_dist(dimension, lower_bound):
@@ -1803,7 +1804,7 @@ def main_mp(num_proc: int = 256):
     sample_number = 100
     true_parameter = [] 
     sample_parameter = []
-    for path_length in [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80]:
+    for path_length in [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80]:
         for i in range(51):
             r = i / 200
             true_parameter_i, sample_parameter_i = get_parameters_mp(
@@ -1818,6 +1819,10 @@ def main_mp(num_proc: int = 256):
             )
             true_parameter += true_parameter_i
             sample_parameter += sample_parameter_i
+            # Release memory
+            del true_parameter_i
+            del sample_parameter_i
+            gc.collect()
         # print(true_parameter)
         # print(sample_parameter)
         prepared_args = [
@@ -1868,6 +1873,11 @@ def main_mp(num_proc: int = 256):
         results = np.array(results)
         # save the results
         np.save(f"results_RWCMDP/results_policy_ratio3.0_{path_length}.npy", results)
+        del results
+        true_parameter.clear()
+        sample_parameter.clear()
+        prepared_args.clear()
+        gc.collect()
     return 
 
 
