@@ -2340,7 +2340,9 @@ def main_mp(num_proc: int = 256):
         np.save(f"results_RWCMDP_val/results_policy_ratio_val3.0_{path_length}.npy", results)
         del results
         true_parameter.clear()
-        sample_parameter.clear()
+        sample_parameter_long.clear()
+        sample_parameter_train.clear()
+        sample_parameter_val.clear()
         prepared_args.clear()
         gc.collect()
     return 
