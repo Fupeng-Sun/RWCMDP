@@ -2328,7 +2328,7 @@ def main_mp(num_proc: int = 256):
         # print(np.array(results))
         results = np.array(results)
         # save the results
-        np.save(f"results_RWCMDP/results_policy_ratio_val3.0_{path_length}.npy", results)
+        np.save(f"results_RWCMDP_val/results_policy_ratio_val3.0_{path_length}.npy", results)
         del results
         true_parameter.clear()
         sample_parameter.clear()
