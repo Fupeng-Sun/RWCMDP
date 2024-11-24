@@ -2167,8 +2167,7 @@ def get_single_sample(
             N_sas_val,
         ),
     )
-
-
+    
 def get_parameters_mp(
     num_samples: int,
     number_of_timeperiods: int,
@@ -2186,7 +2185,9 @@ def get_parameters_mp(
     num_proc: int = 128,
 ) -> Tuple[List[Tuple], List[Tuple]]:
     true_parameter: List[Tuple] = []
-    sample_parameter: List[Tuple] = []
+    sample_parameter_long: List[Tuple] = []
+    sample_parameter_train: List[Tuple] = []
+    sample_parameter_val: List[Tuple] = []
 
     partialed_worker = partial(
         get_single_sample,
@@ -2205,15 +2206,17 @@ def get_parameters_mp(
     )
 
     with mp.Pool(processes=num_proc) as pool:
-        for true_para, sample_para in tqdm(
+        for true_para, sample_para_long, sample_para_train, sample_para_val in tqdm(
             pool.imap_unordered(partialed_worker, range(num_samples)),
             total=num_samples,
             desc=f"Generating parameters with poolsize={num_proc}",
         ):
             true_parameter.append(true_para)
-            sample_parameter.append(sample_para)
+            sample_parameter_long.append(sample_para_long)
+            sample_parameter_train.append(sample_para_train)
+            sample_parameter_val.append(sample_para_val)
 
-    return true_parameter, sample_parameter
+    return true_parameter, sample_parameter_long, sample_parameter_train, sample_parameter_val
 
 
 
@@ -2231,7 +2234,9 @@ def main_mp(num_proc: int = 256):
     num_paths = 5
     sample_number = 100
     true_parameter = [] 
-    sample_parameter = []
+    sample_parameter_long = []
+    sample_parameter_train = []
+    sample_parameter_val = []
     path_length_list = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135]
     for path_length in path_length_list:
         start_time_train = 0
@@ -2240,7 +2245,7 @@ def main_mp(num_proc: int = 256):
         end_time_val = path_length - 1
         for i in range(20):
             r = i / 1000
-            true_parameter_i, sample_parameter_i = get_parameters_mp(
+            true_parameter_i, sample_parameter_long_i, sample_parameter_train_i, sample_parameter_val_i, = get_parameters_mp(
                 sample_number,
                 number_of_timeperiods,
                 number_of_states,
@@ -2255,10 +2260,14 @@ def main_mp(num_proc: int = 256):
                 r,
             )
             true_parameter += true_parameter_i
-            sample_parameter += sample_parameter_i
+            sample_parameter_long += sample_parameter_long_i
+            sample_parameter_train += sample_parameter_train_i
+            sample_parameter_val += sample_parameter_val_i
             # Release memory
             del true_parameter_i
-            del sample_parameter_i
+            del sample_parameter_long_i
+            del sample_parameter_train_i
+            del sample_parameter_val_i
             gc.collect()
         # print(true_parameter)
         # print(sample_parameter)
@@ -2313,7 +2322,7 @@ def main_mp(num_proc: int = 256):
                     N_sa_val,
                     N_sas_val,
                 ), in zip(
-                        true_parameter, sample_parameter
+                        true_parameter, sample_parameter_long, sample_parameter_train, sample_parameter_val
                     )
         ]
 
