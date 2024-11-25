@@ -1804,7 +1804,7 @@ def main_mp(num_proc: int = 256):
     sample_number = 100
     true_parameter = [] 
     sample_parameter = []
-    path_length_list = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110]
+    path_length_list = [80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160]
     for path_length in path_length_list:
         for i in range(51):
             r = i / 1000
