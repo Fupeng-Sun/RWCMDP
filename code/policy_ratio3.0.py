@@ -144,7 +144,8 @@ def initialization(
     # Randomly generate the initial probability
     init_prob = np.array(
         [
-            generate_dist(number_of_states, 0)
+            # generate_dist(number_of_states, 0)
+            [0.2, 0.2, 0.2, 0.2, 0.2]
             for j in range(number_of_bandit_in_total)
         ]
     )
@@ -722,6 +723,74 @@ def monte_carlo_randomized_policy_infeasible(
 
     return total_reward, active_bandit_number/number_of_timeperiods
 
+def random_infeasible(
+    number_of_timeperiods,
+    number_of_states,
+    reward,
+    prob_pull,
+    pulled_ratio,
+    number_of_bandit_in_total,
+    init_prob,
+):
+    """
+    Simulate a Monte Carlo randomized policy for an infeasible solution.
+
+    Args:
+    pi1_LP (list): A 3D list of pi values from the LP solution.
+    pi0_LP (list): A 3D list of pi values from the LP solution.
+    fout (file object): The output file object.
+    number_of_timeperiods (int): The number of time periods.
+    number_of_states (int): The number of states.
+    reward (list): A 3D list of rewards of pull action.
+    prob_pull (list): A 4D list of transition probabilities of pull action.
+    pulled_ratio (float): The maximum percentage of bandits that are allowed to be pulled.
+    number_of_bandit_in_total (int): The total number of bandits.
+    init_prob (list): A 2D list of initial probabilities.
+
+    Returns:
+    float: The total reward obtained from the simulation.
+    """
+    total_reward = 0.0
+    active_bandit_number = 0
+    
+    # Initialization of state for each arm based on the initial probability
+    arm_state = np.array(
+        [
+            np.random.choice(number_of_states, p=init_prob[j])
+            for j in range(number_of_bandit_in_total)
+        ]
+    )
+
+    # Vectorized simulation for each time period
+    for t in range(number_of_timeperiods):
+        active_probs = np.ones(number_of_bandit_in_total) * pulled_ratio
+        # Randomly determine which arms are active based on the active probabilities (vectorized)
+        random_values = np.random.rand(number_of_bandit_in_total)
+        active = random_values < active_probs
+
+        # Calculate the weights (1 + active_prob if active, else 0)
+        action = np.where(active, 1, 0)
+        state_idx = np.array(
+            [i for i in range(number_of_bandit_in_total) if action[i] > 0]
+        )
+
+        # Update total reward and arm states based on actions (vectorized)
+        reward_for_pulled = (
+            reward[np.arange(number_of_bandit_in_total), arm_state] * action
+        )
+        total_reward += np.sum(reward_for_pulled)
+
+        # Update the state of pulled arms based on transition probabilities (vectorized)
+        # print(prob_pull[state_idx, arm_state[state_idx], :])
+        if len(state_idx) > 0:
+            arm_state[state_idx] = generate_number_in_dist_batch(
+                prob_pull[state_idx, arm_state[state_idx], :]
+            )
+        active_bandit_number += np.sum(action)
+        # print(f"Allowed bandit number: {int(pulled_ratio * number_of_bandit_in_total)}")
+        print(f"Number of active bandits of fluid LP: {np.sum(action)}")
+
+    return total_reward, active_bandit_number/number_of_timeperiods
 
 def monte_carlo_randomized_policy_feasible(
     pi1_LP,
@@ -1631,6 +1700,17 @@ def policy_ratio(
             change = 0,
         )
     )
+    
+    infeasible_total_reward_random, infeasible_total_number_random = random_infeasible(
+        number_of_timeperiods,
+        number_of_states,
+        reward,
+        prob_pull,
+        pulled_ratio,
+        number_of_bandit_in_total,
+        init_prob,
+    )
+    
     return np.array(
         [
             infeasible_total_reward_mle / infeasible_total_reward_true,
@@ -1655,6 +1735,7 @@ def policy_ratio(
             / infeasible_total_reward_true,
             feasible_total_reward_Rmle_online_mixed
             / infeasible_total_reward_true,
+            infeasible_total_reward_random / infeasible_total_reward_true,
         ]
     ), np.array(
         [
@@ -1671,8 +1752,8 @@ def policy_ratio(
             infeasible_active_bandit_number_mle_online_mixed, 
             feasible_active_bandit_number_mle_online_mixed, 
             infeasible_active_bandit_number_Rmle_online_mixed, 
-            feasible_active_bandit_number_Rmle_online_mixed
-                
+            feasible_active_bandit_number_Rmle_online_mixed,
+            infeasible_total_number_random,
         ]
         )
     # return np.array([objval_true/Robjval_true, objval_mle/Robjval_mle])
@@ -1804,7 +1885,8 @@ def main_mp(num_proc: int = 256):
     sample_number = 100
     true_parameter = [] 
     sample_parameter = []
-    path_length_list = [80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160]
+    # path_length_list = [80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160]
+    path_length_list = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80]
     for path_length in path_length_list:
         for i in range(51):
             r = i / 1000
@@ -1835,7 +1917,8 @@ def main_mp(num_proc: int = 256):
                 prob_pull,
                 prob_donothing,
                 reward,
-                initial_prob,
+                # initial_prob,
+                init_prob,
                 transition_kernel_pull,
                 transition_kernel_donothing,
                 pulled_ratio,
