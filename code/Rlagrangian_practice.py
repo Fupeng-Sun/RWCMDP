@@ -1922,7 +1922,7 @@ def RLagrangian_relaxation_parallel(number_of_timeperiods, number_of_states, rew
 
     return value, action, RLgradient_T0, Rprob_pull_batch, Rprob_donothing_batch, RLvalue_T0
 
-def subgradient(number_of_timeperiods, number_of_states, reward, init_prob, prob_pull, prob_donothing, pulled_ratio, number_of_bandit_in_total, radius_pull, radius_donothing, T0, num_proc):
+def subgradient(lr, number_of_timeperiods, number_of_states, reward, init_prob, prob_pull, prob_donothing, pulled_ratio, number_of_bandit_in_total, radius_pull, radius_donothing, T0, num_proc):
     """
     Solve the constant_decision_rule_LP using CPLEX.
 
@@ -1947,7 +1947,7 @@ def subgradient(number_of_timeperiods, number_of_states, reward, init_prob, prob
     The objective value of the solved robust Lagrangian relaxation, and the optimal solutions.
     """
     iterations = 10
-    learning_rate = 0.0003
+    learning_rate = lr
     stopping_threshold = 1e-6
     
     # generate some randomized parameter initial values
@@ -1981,7 +1981,7 @@ def subgradient(number_of_timeperiods, number_of_states, reward, init_prob, prob
     return rsl, mu_star, value[idx], action[idx], gradient[idx], Rprob_pull_batch[idx], Rprob_donothing_batch[idx]
 
 def main_mp():
-    r = 0.8
+    r = 0
     T0=0
     num_proc = 256
     number_of_timeperiods = 15
@@ -2068,12 +2068,16 @@ def main_mp():
     )   
 
     # value, action, gradient, Rprob_pull, Rprob_donothing, Robust_Lagrangian_relaxation = RLagrangian_relaxation_parallel(number_of_timeperiods, number_of_states, reward, init_prob, prob_pull, prob_donothing, pulled_ratio, number_of_bandit_in_total, radius_pull, radius_donothing, 0, T0, num_proc)
-    Robust_Lagrangian_relaxation_subgradient, mu_star, value, action, gradient, Rprob_pull_batch, Rprob_donothing_batch = subgradient(number_of_timeperiods, number_of_states, reward, init_prob, prob_pull, prob_donothing, pulled_ratio, number_of_bandit_in_total, radius_pull, radius_donothing, T0, num_proc)
-    # print(f"Robust_Lagrangian_relaxation", Robust_Lagrangian_relaxation) 
-    print(f"Robust_Lagrangian_relaxation_subgradient", Robust_Lagrangian_relaxation_subgradient) 
-    print(f"constant_decision_rule_LP", objval_true_c_b) 
-    print(f"mu_star", mu_star)
-    print(f"gradient", gradient)
+    for lr in [0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009, 0.001]:
+        Robust_Lagrangian_relaxation_subgradient, mu_star, value, action, gradient, Rprob_pull_batch, Rprob_donothing_batch = subgradient(lr, number_of_timeperiods, number_of_states, reward, init_prob, prob_pull, prob_donothing, pulled_ratio, number_of_bandit_in_total, radius_pull, radius_donothing, T0, num_proc)
+        # print(f"Robust_Lagrangian_relaxation", Robust_Lagrangian_relaxation) 
+        print(f"Robust_Lagrangian_relaxation_subgradient_{lr}", Robust_Lagrangian_relaxation_subgradient) 
+        print(f"constant_decision_rule_LP", objval_true_c_b) 
+        print(f"mu_star_{lr}", mu_star)
+        print(f"gradient_{lr}", gradient)
+        
+        results = np.array([init_prob, prob_pull, prob_donothing, reward, radius_pull, radius_donothing, Robust_Lagrangian_relaxation_subgradient, mu_star, value, action, gradient, Rprob_pull_batch, Rprob_donothing_batch], dtype=object)
+        np.save(f"Rlagrangian_choice_lr/results_Rlagrangian_practice_r=0_mle_{lr}.npy", results, allow_pickle=True)
 class TimeCounter:
     # we implement a simple context timer for measuring the running time of the code
     def __init__(self, name: str = ""):
