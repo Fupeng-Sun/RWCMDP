@@ -37,16 +37,35 @@ def generate_dist(dimension, lower_bound):
     return list(dist[0])
 
 
+# def generate_random_transition_kernel(dimension):
+#     # Step 1: Create an n x n matrix of random numbers
+#     matrix = np.random.rand(dimension, dimension)
+
+#     # Step 2: Normalize each row to make the row sum to 1
+#     row_sums = matrix.sum(axis=1)
+#     transition_kernel = matrix / row_sums[:, np.newaxis]
+
+#     return transition_kernel
+
 def generate_random_transition_kernel(dimension):
     # Step 1: Create an n x n matrix of random numbers
     matrix = np.random.rand(dimension, dimension)
 
-    # Step 2: Normalize each row to make the row sum to 1
+    num_rows = dimension // 2
+
+    # Randomly select 50% of the rows
+    selected_rows = np.random.choice(dimension, num_rows, replace=False)
+
+    # Create an array of random column indices for each selected row
+    cols = np.random.randint(dimension, size=num_rows)
+
+    # Add 5 to the selected elements
+    matrix[selected_rows, cols] += 5
+        
     row_sums = matrix.sum(axis=1)
     transition_kernel = matrix / row_sums[:, np.newaxis]
-
+    
     return transition_kernel
-
 
 def generate_number_in_dist_batch(dists):
     """
@@ -1014,9 +1033,9 @@ def count_to_kernel(
         N_sa_value = N_sa[(i, s_t, a_t)]
         if N_sa_value > 0:
             transition_kernel[i, s_t, a_t, s_tp1] = count / N_sa_value
-    # mask = np.sum(transition_kernel[:, :, :, :], axis=3) == 0
-    # transition_kernel = np.where(mask[:, :, :, np.newaxis], np.array(generate_dist(number_of_states, 0)), transition_kernel[:, :, :, :])
-    transition_kernel[:, :, 1, :] = (transition_kernel[:, :, 1, :] + 0.01)/(transition_kernel[:, :, 1, :] + 0.01).sum(axis=2, keepdims=True)
+    mask = np.sum(transition_kernel[:, :, :, :], axis=3) == 0
+    transition_kernel = np.where(mask[:, :, :, np.newaxis], np.array(generate_dist(number_of_states, 0)), transition_kernel[:, :, :, :])
+    # transition_kernel[:, :, 1, :] = (transition_kernel[:, :, 1, :] + 0.01)/(transition_kernel[:, :, 1, :] + 0.01).sum(axis=2, keepdims=True)
     return transition_kernel[:, :, 1, :], transition_kernel[:, :, 0, :]
 
 def monte_carlo_randomized_policy_infeasible_online(
@@ -1886,10 +1905,10 @@ def main_mp(num_proc: int = 256):
     true_parameter = [] 
     sample_parameter = []
     # path_length_list = [80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160]
-    path_length_list = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80]
+    path_length_list = [15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90]
     for path_length in path_length_list:
         for i in range(51):
-            r = i / 1000
+            r = i / 500
             true_parameter_i, sample_parameter_i = get_parameters_mp(
                 sample_number,
                 number_of_timeperiods,
