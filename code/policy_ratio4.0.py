@@ -1694,8 +1694,8 @@ def main_mp(num_proc: int = 256):
     # path_length_list = [80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160]
     path_length_list = [15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90]
     for path_length in path_length_list:
-        for i in range(101):
-            r = i / 200
+        for i in range(51):
+            r = i / 100
             true_parameter_i, sample_parameter_i = get_parameters_mp(
                 sample_number,
                 number_of_timeperiods,
@@ -1762,7 +1762,7 @@ def main_mp(num_proc: int = 256):
         # print(np.array(results))
         results = np.array(results)
         # save the results
-        np.save(f"results_RWCMDP_true_init/results_policy_ratio3.0_{path_length}.npy", results)
+        np.save(f"results_RWCMDP_true_init/results_policy_ratio4.0_{path_length}.npy", results)
         del results
         true_parameter.clear()
         sample_parameter.clear()
