@@ -51,7 +51,7 @@ def generate_random_transition_kernel(dimension):
     # Step 1: Create an n x n matrix of random numbers
     matrix = np.random.rand(dimension, dimension)
 
-    num_rows = dimension // 2
+    num_rows = dimension - 1
 
     # Randomly select 50% of the rows
     selected_rows = np.random.choice(dimension, num_rows, replace=False)
@@ -60,8 +60,11 @@ def generate_random_transition_kernel(dimension):
     cols = np.random.randint(dimension, size=num_rows)
 
     # Add 5 to the selected elements
-    matrix[selected_rows, cols] += 5
-        
+    matrix[np.ix_(selected_rows, cols)] += 5
+    # matrix[0,4] += 5
+    # matrix[1,[2,3]] += 2.5
+    # matrix[2,[0,1,4]] += 1.5
+    # matrix[3,[0,1,2,4]] += 1  
     row_sums = matrix.sum(axis=1)
     transition_kernel = matrix / row_sums[:, np.newaxis]
     
@@ -198,9 +201,10 @@ def initialization(
     reward = np.random.uniform(0, 1, (number_of_bandit_in_total, number_of_states))
     num_rows_to_modify = int(0.5 * number_of_bandit_in_total)
     rows_to_modify = np.random.choice(number_of_bandit_in_total, num_rows_to_modify, replace=False)
-
-    reward[rows_to_modify, 1:] = 0
-    reward[rows_to_modify, 0] = number_of_states * 0.5
+    col_to_modify = np.random.choice(number_of_states, 1, replace=False)
+    reward[rows_to_modify,:] = 0
+    reward[np.ix_(rows_to_modify, col_to_modify)] = 2.5
+    # # reward[rows_to_modify, 0] = number_of_states * 0.5
         
     return (
         init_prob,
@@ -524,10 +528,10 @@ def constant_decision_rule_LP(
                 for l in range(number_of_states):
                     tmp_ub_l = [
                         (
-                            min(prob_pull[j][k][_] + radius_pull[t][j][k], 1),
+                            min(prob_pull[j][k][_] + radius_pull[t][j][k][_], 1),
                             min(
                                 prob_donothing[j][k][_]
-                                + radius_donothing[t][j][k],
+                                + radius_donothing[t][j][k][_],
                                 1,
                             ),
                         )
@@ -555,12 +559,12 @@ def constant_decision_rule_LP(
                     # )
                     result_pull[t][j][k][l] = max(
                             0,
-                            prob_pull[j][k][l] - radius_pull[t][j][k],
+                            prob_pull[j][k][l] - radius_pull[t][j][k][l],
                             1 - sum([t[0] for t in tmp_ub_l]),
                         )
                     result_donothing[t][j][k][l] = max(
                             0,
-                            prob_donothing[j][k][l] - radius_donothing[t][j][k],
+                            prob_donothing[j][k][l] - radius_donothing[t][j][k][l],
                             1 - sum([t[1] for t in tmp_ub_l]),
                         )
     # print(result_donothing[0]==prob_donothing)
@@ -1043,17 +1047,17 @@ def count_to_kernel(
         )
     )
     radius = r * np.ones(
-        (number_of_timeperiods, number_of_bandit_in_total, number_of_actions, number_of_states)
+        (number_of_timeperiods, number_of_bandit_in_total, number_of_actions, number_of_states, number_of_states)
     )
     for (i, s_t, a_t, s_tp1), count in N_sas.items():
         N_sa_value = N_sa[(i, s_t, a_t)]
         if N_sa_value > 0:
             transition_kernel[i, s_t, a_t, s_tp1] = count / N_sa_value
-            radius[:, i, a_t, s_t] = radius[:, i, a_t, s_t] * np.sqrt(1 / N_sa_value)
+            radius[:, i, a_t, s_t, s_tp1] = radius[:, i, a_t, s_t, s_tp1] * np.sqrt(1 / count)
     mask = np.sum(transition_kernel[:, :, :, :], axis=3) == 0
     transition_kernel = np.where(mask[:, :, :, np.newaxis], np.array(generate_dist(number_of_states, 0)), transition_kernel[:, :, :, :])
     # transition_kernel[:, :, 1, :] = (transition_kernel[:, :, 1, :] + 0.0001)/(transition_kernel[:, :, 1, :] + 0.01).sum(axis=2, keepdims=True)
-    return transition_kernel[:, :, 1, :], transition_kernel[:, :, 0, :], radius[:, :, 1, :], radius[:, :, 0, :]
+    return transition_kernel[:, :, 1, :], transition_kernel[:, :, 0, :], radius[:, :, 1, :, :], radius[:, :, 0, :, :]
 
 def monte_carlo_randomized_policy_infeasible_online(
     number_of_timeperiods,
@@ -1762,7 +1766,7 @@ def main_mp(num_proc: int = 256):
         # print(np.array(results))
         results = np.array(results)
         # save the results
-        np.save(f"results_RWCMDP_true_init/results_policy_ratio4.0_{path_length}.npy", results)
+        np.save(f"results_RWCMDP_true_init_uniform_reward/results_policy_ratio4.0_{path_length}.npy", results)
         del results
         true_parameter.clear()
         sample_parameter.clear()
