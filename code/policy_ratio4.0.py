@@ -1698,8 +1698,8 @@ def main_mp(num_proc: int = 256):
     # path_length_list = [80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160]
     path_length_list = [15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90]
     for path_length in path_length_list:
-        for i in range(51):
-            r = i / 100
+        for i in range(31):
+            r = i / 300
             true_parameter_i, sample_parameter_i = get_parameters_mp(
                 sample_number,
                 number_of_timeperiods,
