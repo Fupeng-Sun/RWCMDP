@@ -199,11 +199,12 @@ def initialization(
 
     # Randomly generate the reward function
     reward = np.random.uniform(0, 1, (number_of_bandit_in_total, number_of_states))
-    num_rows_to_modify = int(0.5 * number_of_bandit_in_total)
+    num_rows_to_modify = int(0.75 * number_of_bandit_in_total)
     rows_to_modify = np.random.choice(number_of_bandit_in_total, num_rows_to_modify, replace=False)
-    col_to_modify = np.random.choice(number_of_states, 1, replace=False)
+    # col_to_modify = np.random.choice(number_of_states, 1, replace=False)
     reward[rows_to_modify,:] = 0
-    reward[np.ix_(rows_to_modify, col_to_modify)] = 2.5
+    reward[rows_to_modify, np.random.choice(number_of_states, num_rows_to_modify, replace=True)] = 2.5
+    # reward[np.ix_(rows_to_modify, col_to_modify)] = 2.5
     # # reward[rows_to_modify, 0] = number_of_states * 0.5
         
     return (
@@ -1698,8 +1699,8 @@ def main_mp(num_proc: int = 256):
     # path_length_list = [80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160]
     path_length_list = [15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90]
     for path_length in path_length_list:
-        for i in range(31):
-            r = i / 300
+        for i in range(21):
+            r = i / 150
             true_parameter_i, sample_parameter_i = get_parameters_mp(
                 sample_number,
                 number_of_timeperiods,
