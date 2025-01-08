@@ -55,16 +55,16 @@ def generate_random_transition_kernel(dimension):
 
     # Randomly select 50% of the rows
     selected_rows = np.random.choice(dimension, num_rows, replace=False)
+    matrix[selected_rows, np.random.choice(dimension, num_rows, replace=True)] = 2.5
+    # # Create an array of random column indices for each selected row
+    # cols = np.random.randint(dimension, size=num_rows)
 
-    # Create an array of random column indices for each selected row
-    cols = np.random.randint(dimension, size=num_rows)
-
-    # Add 5 to the selected elements
-    matrix[np.ix_(selected_rows, cols)] += 5
-    # matrix[0,4] += 5
-    # matrix[1,[2,3]] += 2.5
-    # matrix[2,[0,1,4]] += 1.5
-    # matrix[3,[0,1,2,4]] += 1  
+    # # Add 5 to the selected elements
+    # matrix[np.ix_(selected_rows, cols)] += 5
+    # # matrix[0,4] += 5
+    # # matrix[1,[2,3]] += 2.5
+    # # matrix[2,[0,1,4]] += 1.5
+    # # matrix[3,[0,1,2,4]] += 1  
     row_sums = matrix.sum(axis=1)
     transition_kernel = matrix / row_sums[:, np.newaxis]
     
@@ -199,7 +199,7 @@ def initialization(
 
     # Randomly generate the reward function
     reward = np.random.uniform(0, 1, (number_of_bandit_in_total, number_of_states))
-    num_rows_to_modify = int(0.75 * number_of_bandit_in_total)
+    num_rows_to_modify = int(0.9 * number_of_bandit_in_total)
     rows_to_modify = np.random.choice(number_of_bandit_in_total, num_rows_to_modify, replace=False)
     # col_to_modify = np.random.choice(number_of_states, 1, replace=False)
     reward[rows_to_modify,:] = 0
