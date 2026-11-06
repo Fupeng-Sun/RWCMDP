@@ -1,0 +1,5 @@
+# Environment B: Python 3.12, reproduces the subgradient-policy results (fig3_sub, fig4_sub), Table 2, the controls,
+# the valid-radius experiment and the figure PDFs of the paper exactly. See README.md.
+numpy==2.5.4
+scipy==1.18.1
+matplotlib==3.11.2

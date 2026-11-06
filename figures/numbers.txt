@@ -1,0 +1,60 @@
+Figure 3 (beta = 0.5; medians over the histories)
+  K= 5 (20 histories, 17 radii): MLE 0.807, random 0.632; at c=0.5 Sub 0.999 CDR 0.988; peak Sub 0.999 (c=0.5) CDR 0.989 (c=0.4); at c=5 Sub 0.983 CDR 0.972
+         IQR (pt): MLE 1.30; c=0 Sub 1.24 CDR 1.42; max over c>=0.5 Sub 0.16 CDR 0.18; gain of the best robust median over MLE 19.2 pt; at c=5 over MLE: Sub 17.5 CDR 16.4 pt
+  K=10 (20 histories, 17 radii): MLE 0.868, random 0.632; at c=0.5 Sub 0.998 CDR 0.989; peak Sub 0.999 (c=0.6) CDR 0.989 (c=0.5); at c=5 Sub 0.983 CDR 0.973
+         IQR (pt): MLE 1.38; c=0 Sub 1.39 CDR 1.54; max over c>=0.5 Sub 0.17 CDR 0.19; gain of the best robust median over MLE 13.2 pt; at c=5 over MLE: Sub 11.5 CDR 10.5 pt
+  K=15 (20 histories, 17 radii): MLE 0.915, random 0.632; at c=0.5 Sub 0.999 CDR 0.990; peak Sub 1.000 (c=0.8) CDR 0.990 (c=0.6); at c=5 Sub 0.986 CDR 0.974
+         IQR (pt): MLE 1.58; c=0 Sub 1.55 CDR 1.50; max over c>=0.5 Sub 0.14 CDR 0.14; gain of the best robust median over MLE 8.5 pt; at c=5 over MLE: Sub 7.0 CDR 5.9 pt
+  K=20 (20 histories, 17 radii): MLE 0.942, random 0.632; at c=0.5 Sub 0.999 CDR 0.990; peak Sub 1.001 (c=0.8) CDR 0.990 (c=0.6); at c=5 Sub 0.989 CDR 0.973
+         IQR (pt): MLE 0.72; c=0 Sub 0.79 CDR 0.63; max over c>=0.5 Sub 0.16 CDR 0.14; gain of the best robust median over MLE 5.9 pt; at c=5 over MLE: Sub 4.8 CDR 3.1 pt
+Cross-validation regret vs best c in hindsight (K=5, beta=0.5, 5 histories, Figure 3 radii): Sub mean 0.40 max 0.59 pt; CDR mean 0.48 max 0.74 pt
+Figure 4(a) (K = 5, means over the histories)
+  beta=0    (1): MLE 1.000 Sub 1.000 CDR 1.000 random 1.000
+  beta=0.05 (5): MLE 0.937 Sub 1.006 CDR 0.946 random 0.809
+  beta=0.1  (5): MLE 0.916 Sub 0.993 CDR 0.918 random 0.718
+  beta=0.15 (5): MLE 0.907 Sub 0.988 CDR 0.910 random 0.683
+  beta=0.2  (5): MLE 0.891 Sub 0.998 CDR 0.933 random 0.674
+  beta=0.25 (5): MLE 0.870 Sub 1.019 CDR 0.965 random 0.681
+  beta=0.3  (5): MLE 0.833 Sub 0.997 CDR 0.983 random 0.671
+  beta=0.4  (5): MLE 0.819 Sub 0.994 CDR 0.984 random 0.670
+  beta=0.5  (5): MLE 0.811 Sub 0.996 CDR 0.984 random 0.631
+  beta=0.7  (5): MLE 0.799 Sub 0.998 CDR 0.993 random 0.446
+  Sub - 1: -1.2 to 1.9 pt; Sub - MLE: 6.9 to 19.9 pt; CDR min for beta >= 0.3: 0.983; CDR - MLE for 0 < beta <= 0.15: 0.9, 0.2, 0.3 pt
+Figure 4(b) (beta = 0.25, means over the histories)
+  K= 5 (10): MLE 0.869 Sub 1.020 CDR 0.966 random 0.682   CDR-MLE   9.7 pt, Sub-MLE  15.1 pt
+  K=10 (10): MLE 0.916 Sub 1.016 CDR 0.971 random 0.682   CDR-MLE   5.5 pt, Sub-MLE  10.0 pt
+  K=15 (10): MLE 0.948 Sub 1.024 CDR 0.977 random 0.682   CDR-MLE   2.9 pt, Sub-MLE   7.6 pt
+  K=20 (10): MLE 0.968 Sub 1.026 CDR 0.977 random 0.682   CDR-MLE   1.0 pt, Sub-MLE   5.9 pt
+  K=25 (10): MLE 0.978 Sub 1.029 CDR 0.982 random 0.682   CDR-MLE   0.4 pt, Sub-MLE   5.1 pt
+  K=30 (10): MLE 0.984 Sub 1.032 CDR 0.983 random 0.682   CDR-MLE  -0.0 pt, Sub-MLE   4.8 pt
+  K=35 (10): MLE 0.989 Sub 1.034 CDR 0.988 random 0.682   CDR-MLE  -0.1 pt, Sub-MLE   4.5 pt
+  K=40 (10): MLE 0.989 Sub 1.034 CDR 0.989 random 0.682   CDR-MLE  -0.0 pt, Sub-MLE   4.6 pt
+Controls (beta = 0.25; mean / median over the histories)
+  K= 5: MLE-index 0.8749 / 0.8737, TRUE-index 1.0486 / 1.0485, random-working 0.8782 / 0.8782; Sub - MLE-index 14.47 pt
+  K=10: MLE-index 0.9262 / 0.9295, TRUE-index 1.0486 / 1.0485, random-working 0.8782 / 0.8782; Sub - MLE-index 8.98 pt
+  K=15: MLE-index 0.9651 / 0.9628, TRUE-index 1.0486 / 1.0485, random-working 0.8782 / 0.8782; Sub - MLE-index 5.91 pt
+  K=20: MLE-index 0.9904 / 0.9910, TRUE-index 1.0486 / 1.0485, random-working 0.8782 / 0.8782; Sub - MLE-index 3.59 pt
+  K=25: MLE-index 1.0065 / 1.0070, TRUE-index 1.0486 / 1.0485, random-working 0.8782 / 0.8782; Sub - MLE-index 2.29 pt
+  K=30: MLE-index 1.0165 / 1.0156, TRUE-index 1.0486 / 1.0485, random-working 0.8782 / 0.8782; Sub - MLE-index 1.52 pt
+  K=35: MLE-index 1.0250 / 1.0254, TRUE-index 1.0486 / 1.0485, random-working 0.8782 / 0.8782; Sub - MLE-index 0.93 pt
+  K=40: MLE-index 1.0246 / 1.0238, TRUE-index 1.0486 / 1.0485, random-working 0.8782 / 0.8782; Sub - MLE-index 0.95 pt
+Sticky vs period-by-period restoration (K = 5, validated c): largest drop over the histories (pt)
+  beta=0.25 (5): MLE 0.14, CDR 0.18, Sub 4.13; Sub sticky min 0.978
+  beta=0.5 (5): MLE 0.00, CDR 0.06, Sub 1.10; Sub sticky min 0.983
+Valid radii of Section 4.2 (alpha = 0.05; coverage and full-simplex share = means, ratios = medians)
+  beta=0.5  K= 5 (20): M=1200 m=70 coverage 1.000 full simplex 98% median radius 1.00 (c = rho sqrt(m) 8.4) | MLE 0.807 Sub 0.970 CDR 0.879
+  beta=0.5  K=10 (20): M=1200 m=140 coverage 1.000 full simplex 76% median radius 1.00 (c = rho sqrt(m) 11.8) | MLE 0.867 Sub 0.980 CDR 0.939
+  beta=0.5  K=15 (20): M=1200 m=210 coverage 1.000 full simplex 60% median radius 1.00 (c = rho sqrt(m) 14.5) | MLE 0.916 Sub 0.988 CDR 0.972
+  beta=0.5  K=20 (20): M=1200 m=280 coverage 1.000 full simplex 41% median radius 0.91 (c = rho sqrt(m) 15.2) | MLE 0.942 Sub 0.990 CDR 0.977
+  beta=0.25 K= 5 (20): M=1200 m=70 coverage 1.000 full simplex 98% median radius 1.00 (c = rho sqrt(m) 8.4) | MLE 0.869 Sub 0.997 CDR 0.758
+  beta=0.25 K=10 (20): M=1200 m=140 coverage 1.000 full simplex 76% median radius 1.00 (c = rho sqrt(m) 11.8) | MLE 0.917 Sub 1.012 CDR 0.836
+  beta=0.25 K=15 (20): M=1200 m=210 coverage 1.000 full simplex 60% median radius 1.00 (c = rho sqrt(m) 14.5) | MLE 0.950 Sub 1.022 CDR 0.858
+  beta=0.25 K=20 (20): M=1200 m=280 coverage 1.000 full simplex 41% median radius 0.91 (c = rho sqrt(m) 15.2) | MLE 0.969 Sub 1.026 CDR 0.878
+Table 2 (c = 2; means over the histories): plan / worst case / realized (period-by-period restoration; subgradient policy by index priority)
+  K= 5 beta=0.5  (3): 1.132 0.581 0.808 | 0.970 0.970 0.993 | 0.958 0.969 0.981
+  K= 5 beta=0.25 (3): 1.233 0.629 0.868 | 0.974 0.974 1.019 | 0.822 0.866 0.932
+  K=20 beta=0.5  (3): 1.062 0.865 0.944 | 0.992 0.992 0.998 | 0.985 0.991 0.986
+  K=20 beta=0.25 (3): 1.136 0.888 0.970 | 0.995 0.995 1.027 | 0.881 0.922 0.963
+  MLE plan - realized (pt): K=5: 32.4, 36.5; K=20: 11.8, 16.6
+  worst case > realized in 1 of 12 cases: [(20, 0.5, 'CDR')]; CDR plan <= realized in all cases: True; max |Sub plan - worst case| 2.4e-14
+  K=5: robust worst case - MLE worst case (pt): beta=0.5 Sub 38.9, beta=0.5 CDR 38.9, beta=0.25 Sub 34.5, beta=0.25 CDR 23.7

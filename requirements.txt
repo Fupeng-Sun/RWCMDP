@@ -1,0 +1,4 @@
+# Environment A: Python 3.9, reproduces the LP-based results (fig3_lp*, fig4_lp*) exactly. See README.md.
+numpy==2.0.2
+scipy==1.13.1
+matplotlib==3.9.4
