@@ -58,3 +58,12 @@ Table 2 (c = 2; means over the histories): plan / worst case / realized (period-
   MLE plan - realized (pt): K=5: 32.4, 36.5; K=20: 11.8, 16.6
   worst case > realized in 1 of 12 cases: [(20, 0.5, 'CDR')]; CDR plan <= realized in all cases: True; max |Sub plan - worst case| 2.4e-14
   K=5: robust worst case - MLE worst case (pt): beta=0.5 Sub 38.9, beta=0.5 CDR 38.9, beta=0.25 Sub 34.5, beta=0.25 CDR 23.7
+Gap decomposition (c = 2, K = 5; % of the true-kernel policy's reward, means over the histories): gap to L*(p0) = unused + regret
+  beta=0.5  TRUE  (3): gap   1.6 = unused   0.1 + regret   1.4   (check   1.6)
+  beta=0.5  MLE   (3): gap  20.8 = unused   1.4 + regret  19.3   (check  20.7)
+  beta=0.5  Sub   (3): gap   2.3 = unused   0.2 + regret   2.1   (check   2.2)
+  beta=0.5  CDR   (3): gap   3.4 = unused   0.2 + regret   3.3   (check   3.4)
+  beta=0.25 TRUE  (3): gap   5.7 = unused   1.6 + regret   4.1   (check   5.7)
+  beta=0.25 MLE   (3): gap  18.9 = unused   6.4 + regret  12.5   (check  18.9)
+  beta=0.25 Sub   (3): gap   3.9 = unused   0.4 + regret   3.5   (check   3.8)
+  beta=0.25 CDR   (3): gap  12.6 = unused   1.7 + regret  10.8   (check  12.5)
