@@ -72,3 +72,11 @@ is what `experiments/fig4_cross_validation.py` does. The original grid was score
 in environment B, so a rerun of the CDR part in environment A reproduces `cv_scores[1]` exactly on {0, ..., 3} but not
 on {4, 5, 7, 10} (differences of up to 3 reward units out of about 1,000 for K = 5, seed 0, beta = 0.25); the CDR
 selection lies in {4, 5, 7, 10} for three histories (K = 5, beta in {0.05, 0.1}).
+
+## `text_decomposition.pkl` (environment A; Section 5, last paragraph; Proposition 4)
+K = 5, beta in {0.25, 0.5}, seeds 0-2, c = 2 for both robust policies (the policies of Table 2). Records: `K, seed, b, c,
+L_star` (optimal value of FLP(p0)), `mu_star` (its budget multipliers, shape (T,)), and for each of `TRUE, MLE, Sub, CDR`
+a dict `reward` (mean total reward under p0, period-by-period restoration, stream [1, seed]), `unused`
+(sum_t mu*_t (b_t - mean number of repairs in period t)) and `regret` (sum over periods and machines of the mean
+suboptimality Delta of the actions taken, Delta from the Q-values under p0 and mu*). The identity
+L_star - reward = unused + regret holds up to the simulation error. `make_figures.py` prints the means.

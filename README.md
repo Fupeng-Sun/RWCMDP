@@ -6,7 +6,7 @@ Code, data and results for
 
 The package reproduces every numerical result of the paper: Figure 1 (Example 1, nonconvexity of the robust
 Lagrangian bound), Figures 3 and 4 and Table 2 (fleet maintenance experiments of Section 5), the numbers quoted in the
-text of Section 5, and the simulation mentioned at the end of Section 4.4. Figure 2 (the single-machine MDP) is a
+text of Section 5, and the simulation mentioned at the end of Section 4.4 and the attribution of the gaps of Section 5 (Proposition 4). Figure 2 (the single-machine MDP) is a
 TikZ drawing of the instance defined in `rwcmdp/instance.py`.
 
 ## Contents
@@ -55,7 +55,7 @@ environment:
   c in {4, 5, 7, 10} and the three CDR ratios whose validated c lies in this set were computed in environment B);
 * environment B, `requirements-b.txt` (Python 3.12.13, numpy 2.5.4, scipy 1.18.1, matplotlib 3.11.2): the
   subgradient policy of Figures 3 and 4 (`fig3_sub.pkl`, `fig4_sub.pkl`), Table 2 (both files), the controls, the valid-radius
-  experiment, and the figure PDFs (`make_figures.py` in environment B reproduces the paper's PDFs pixel by pixel;
+  experiment, and the figure PDFs; `text_decomposition.pkl` was computed in environment A (`make_figures.py` in environment B reproduces the paper's PDFs pixel by pixel;
   matplotlib 3.9.4 draws the same data with slightly different glyph rendering).
 
 All code runs in both environments.
@@ -98,6 +98,7 @@ summarized with `python make_figures.py --results output --figures output/figure
 | Table 2 | `experiments/table2_certificates.py` (stored Sub column: `--sub-index-only`) | `table2_certificates.pkl`, `table2_sub_index.pkl` | a few minutes |
 | Section 5: index policies from p_hat and p0, random policy for working machines, footnote on sticky restoration | `experiments/text_controls.py` | `text_controls.pkl` | about 10 min |
 | Section 5: valid radii (alpha = 0.05) | `experiments/valid_radius.py` | `valid_radius.pkl` | about 10 min |
+| Section 5: attribution of the gaps to unused capacity and action regret (Proposition 4) | `experiments/text_decomposition.py` | `text_decomposition.pkl` | about 5 min |
 | Section 5: cross-validation regret | `make_figures.py` (from Fig. 3 and 4 results) | - | - |
 | Section 5: binding periods (23 and 7 of 30), unobserved pairs (12% for K = 5), shock-free MLE rows | `experiments/instance_stats.py` | printed | 10 s |
 | Section 5: runtimes (fluid LP, CDR LP, Algorithm 1, simulation) | `experiments/timing.py` | printed | 1 min |
@@ -111,6 +112,7 @@ python experiments/fig4_cross_validation.py --K 5 --beta 0.25 --seeds 0 --worker
 python experiments/table2_certificates.py --K 5 --beta 0.5 --c 2 --seeds 0 --workers 1
 python experiments/text_controls.py --K 5 --beta 0.25 --seeds 0 --workers 2
 python experiments/valid_radius.py --K 5 --beta 0.5 --seeds 0 --workers 1
+python experiments/text_decomposition.py --beta 0.25 --seeds 0 --workers 1
 ```
 
 Runtimes depend on the LP solver; most of the time goes into the CDR LPs (about 13 s each, longer for large radii)

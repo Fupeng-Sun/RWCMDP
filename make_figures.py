@@ -175,6 +175,21 @@ def table2(rows, sub_index, out_dir):
         + ", ".join(f"beta={b:g} {p} {pt(mean(5, b, p, 'vrob') - mean(5, b, 'MLE', 'vrob')):.1f}" for b, p in k5))
 
 
+def decomposition_numbers(rows):
+    """Attribution of the gaps (Section 4.4, Proposition 4): L*(p0) - V(pi) = priced unused capacity + action regret."""
+    if not rows:
+        return
+    say("Gap decomposition (c = 2, K = 5; % of the true-kernel policy's reward, means over the histories): gap to L*(p0) = unused + regret")
+    for b in sorted({r["b"] for r in rows}, reverse=True):
+        rr = [r for r in rows if r["b"] == b]
+        vt = np.array([r["TRUE"]["reward"] for r in rr])
+        L = np.array([r["L_star"] for r in rr])
+        for p in ("TRUE", "MLE", "Sub", "CDR"):
+            v, un, rg = (np.array([r[p][k] for r in rr]) for k in ("reward", "unused", "regret"))
+            say(f"  beta={b:<4g} {p:5s} ({len(rr)}): gap {100 * np.mean((L - v) / vt):5.1f} = unused {100 * np.mean(un / vt):5.1f}"
+                f" + regret {100 * np.mean(rg / vt):5.1f}   (check {100 * np.mean((un + rg) / vt):5.1f})")
+
+
 if __name__ == "__main__":
     here = os.path.dirname(os.path.abspath(__file__))
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -195,6 +210,7 @@ if __name__ == "__main__":
     sticky_numbers(controls)
     valid_radius_numbers(load(a.results, "valid_radius"))
     table2(load(a.results, "table2_certificates"), load(a.results, "table2_sub_index"), a.figures)
+    decomposition_numbers(load(a.results, "text_decomposition"))
     with open(os.path.join(a.figures, "numbers.txt"), "w") as f:
         f.write("\n".join(LINES) + "\n")
     print(f"\nfigures, table2_certificates.tex and numbers.txt written to {a.figures}")
